@@ -45,15 +45,17 @@ df_ips["Code du département"] = pd.to_numeric(df_ips["Code du département"], e
 df_res["Code departement"] = pd.to_numeric(df_res["Code departement"], errors="coerce").astype("Int64")
 df_carte["DDEP_C_COD"] = pd.to_numeric(df_carte["DDEP_C_COD"], errors="coerce").astype("Int64")
 
-df_ips_agg = df_ips.groupby("Code du département").agg({"IPS voie GT": "mean"}).reset_index()
-df_res_agg = df_res.groupby("Code departement").agg({"Taux d'accès 2nde-bac": "mean", 
+df_ips["Année"] = df_ips["Rentrée scolaire"].str[-4:].astype(int)
+
+df_ips_agg = df_ips.groupby(["Code du département", "Année"]).agg({"IPS voie GT": "mean"}).reset_index()
+df_res_agg = df_res.groupby(["Code departement", "Année"]).agg({"Taux d'accès 2nde-bac": "mean", 
                                                      "Taux de réussite - Toutes séries": "mean",
                                                      "Taux de mentions - Toutes séries": "mean",
                                                      "Taux d'accès 1ere-bac": "mean",
                                                      "Taux d'accès terminale-bac": "mean"}).reset_index()
 
 data_carte = df_carte.merge(df_ips_agg, left_on="DDEP_C_COD", right_on="Code du département")
-data_carte = data_carte.merge(df_res_agg, left_on="DDEP_C_COD", right_on="Code departement")
+data_carte = data_carte.merge(df_res_agg, left_on=["DDEP_C_COD","Année"], right_on=["Code departement","Année"], how="left")
 data_carte = gpd.GeoDataFrame(data_carte, geometry="geometry")
 
 if data_carte.crs is None:
@@ -103,7 +105,13 @@ st.markdown(code_css, unsafe_allow_html=True)
 
 
 parametre = st.selectbox("Choisissez le paramètre à afficher sur la carte",
-                         ["IPS voie GT", "Taux de réussite - Toutes séries","Taux de mentions - Toutes séries", "Taux d'accès 1ere-bac", "Taux d'accès terminale-bac"])
+                         ["IPS voie GT", "Taux de réussite - Toutes séries","Taux de mentions - Toutes séries", "Taux d'accès 2nde-bac", "Taux d'accès 1ere-bac", "Taux d'accès terminale-bac"])
+nb_cartes = st.pills(options=["1 seule carte", "Comparer 2 cartes"], selection_mode="single")
+if nb_cartes == "Comparer 2 cartes":
+    annee1 = st.selectbox("Choisissez la première année", data_carte["Année"].unique())
+    annee2 = st.selectbox("Choisissez la deuxième année", data_carte["Année"].unique())
+else :
+    annee = st.selectbox("Choisissez l'année", data_carte["Année"].unique())
 resolution = st.selectbox("Choisissez la resolution de la carte", ["Pays", "Région"])
 if resolution == "Région" : 
     region = st.selectbox("Choisissez la région", data_carte["DREG_L_LIB"].unique())
@@ -112,7 +120,17 @@ else :
     data_final = data_carte[["DDEP_C_COD","DDEP_L_LIB", "DREG_L_LIB", "geometry", parametre]]
 
 if st.button("Afficher la carte"):
-    with st.spinner("Génération de la carte en cours...") :
-        map = tracer_ips(data_final, parametre)
-        st.components.v1.html(map._repr_html_(),height=600,scrolling=True)
+    if nb_cartes == "Comparer 2 cartes":
+        data_final1 = data_final[data_final["Année"]==annee1]
+        data_final2 = data_final[data_final["Année"]==annee2]
+        with st.spinner("Génération des cartes en cours...") :
+            map1 = tracer_ips(data_final1, parametre)
+            map2 = tracer_ips(data_final2, parametre)
+            st.components.v1.html(map1._repr_html_(),height=600,scrolling=True)
+            st.components.v1.html(map2._repr_html_(),height=600,scrolling=True)
+    else : 
+        data_final = data_final[data_final["Année"]==annee]
+        with st.spinner("Génération de la carte en cours...") :
+            map = tracer_ips(data_final, parametre)
+            st.components.v1.html(map._repr_html_(),height=600,scrolling=True)
                    
