@@ -22,7 +22,8 @@ df_carte	Contours géographiques des départements	ADEME (geo-contours-departeme
 L'IPS (indice de position sociale) résume le niveau social et culturel des familles des élèves d'un établissement : plus il est élevé, plus le public est favorisé.
 
 Pour répondre a notre problématique, nous avons crée de nouvelles variables plus faciles a analyser
-ecart_selectivite	Taux de réussite − taux d'accès de la seconde au bac. Plus il est grand, plus le lycée « perd » d'élèves en route
+ecart_selectivite	
+Taux de réussite − taux d'accès de la seconde au bac. Plus il est grand, plus le lycée « perd » d'élèves en route
 taux_TB	Part des mentions Très Bien parmi les présents en voie générale
 quartile_IPS	Classement des lycées en 4 groupes selon leur IPS (Q1 = les moins favorisés, Q4 = les plus favorisés)
 taux_mentions_seconde_approx	Approximation du taux de mentions rapporté aux élèves entrés en seconde
