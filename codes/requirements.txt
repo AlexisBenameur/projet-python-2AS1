@@ -1,0 +1,12 @@
+pandas
+geopandas
+numpy
+matplotlib
+requests
+io
+seaborn
+streamlit
+json
+shapely.geometry
+sys
+contextily
