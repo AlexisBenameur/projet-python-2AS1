@@ -13,7 +13,7 @@ np.long = int
 import sys
 sys.modules["numba"] = None
 
-st.set_page_config(page_title="Cartes IPS", page_icon="🌍", layout = "wide")
+st.set_page_config(page_title="Cartes inégalités scolaires", page_icon="🌍", layout = "wide")
 
 url_ips = "https://data.education.gouv.fr/explore/dataset/fr-en-ips_lycees/download/?format=csv&timezone=Europe/Berlin&lang=fr&use_labels_for_header=true&csv_separator=%3B"
 url_res = "https://data.education.gouv.fr/explore/dataset/fr-en-indicateurs-de-resultat-des-lycees-gt_v2/download/?format=csv&timezone=Europe/Berlin&lang=fr&use_labels_for_header=true&csv_separator=%3B"
